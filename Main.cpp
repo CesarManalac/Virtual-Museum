@@ -13,7 +13,7 @@
 #include "skybox.h"
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods);
-
+void cursorEnterCallback(GLFWwindow* window, double x, double y);
 int main() {
 #pragma region Initialization
 	//initialize glfw
@@ -43,6 +43,7 @@ int main() {
 		return -1;
 	}
 	glfwSetKeyCallback(window, keyCallBack);
+	glfwSetCursorPosCallback(window, cursorEnterCallback);
 #pragma endregion
 
 #pragma region Mesh Loading
@@ -60,7 +61,7 @@ int main() {
 		"front.png",
 		"back.png"
 	};
-	SkyboxData skybox = LoadSkybox("Assets/Skybox", faces);
+	SkyboxData skybox = LoadSkybox("Assets/skybox", faces);
 
 #pragma endregion
 
@@ -102,7 +103,7 @@ int main() {
 
 	// var for rotations
 	float xFactor = 0.0f;
-	float xSpeed = 2.0f;
+	float xSpeed = 5.0f;
 	float currentTime = glfwGetTime();
 	float prevTime = 0.0f;
 	float deltaTime = 0.0f;
@@ -139,41 +140,46 @@ int main() {
 		//projection = glm::ortho(-ratio * 10, ratio * 10, -10.0f, 10.0f, 0.1f, 100.0f);
 
 		// Perspective Projection
-		//projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 10.0f),
-
+		projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 100.0f);
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		// Set projection matrix in shader
 
 
 #pragma endregion
 
 #pragma region Bool Handler
-		if (!isForward) {
-			projection = glm::ortho(-ratio * 10, ratio * 10, -10.0f, 10.0f, 0.1f, 100.0f);
+		
+		if (isForward) {
+			cameraPos += cameraTarget * deltaTime * xSpeed;
 		}
-		else {
-			projection = glm::perspective(glm::radians(90.0f), ratio, 0.1f, 100.0f);
+		if (isRight) {
+			cameraPos += glm::normalize(glm::cross(cameraTarget, camerDirection)) * deltaTime * xSpeed;
 		}
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		if (isLeft) {
+			cameraPos -= glm::normalize(glm::cross(cameraTarget, camerDirection)) * deltaTime * xSpeed;
+		}
+		if (isBackward) {
+			cameraPos -= cameraTarget * deltaTime * xSpeed;
+		}
+		/*glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));*/
 #pragma endregion
 
 #pragma region View
 		glm::mat4 view;
-		glm::vec3 cameraPos = glm::vec3(0.0f, -10.0f, 0.0f);
-		if (!isForward) {
-			view = glm::lookAt(
-				/*glm::vec3(0.0f, -10.0f, 0.0f),*/
-				cameraPos,
-				glm::vec3(0, 0, 0),
-				glm::vec3(1.0f, 0.0f, 0.0f));
-		}
-		else {
-			cameraPos = glm::vec3(0.0f, 0.0f, -10.0f);
-			view = glm::lookAt(
-				/*glm::vec3(0.0f, 0.0f, -10.0f)*/
-				cameraPos,
-				glm::vec3(0, 0, 0),
-				glm::vec3(0.0f, 1.0f, 0.0f));
-		}
+		view = glm::lookAt(
+			/*glm::vec3(0.0f, -10.0f, 0.0f),*/
+			cameraPos,
+			cameraPos + cameraTarget,
+			camerDirection
+		);
+		//else {
+		//	//cameraPos = glm::vec3(0.0f, 0.0f, -10.0f);
+		//	view = glm::lookAt(
+		//		/*glm::vec3(0.0f, 0.0f, -10.0f)*/
+		//		cameraPos,
+		//		glm::vec3(0, 0, 0),
+		//		glm::vec3(0.0f, 1.0f, 0.0f));
+		//}
 		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 #pragma endregion
@@ -190,7 +196,7 @@ int main() {
 		glUseProgram(shaderProgram);
 
 		trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(xFactor), glm::vec3(0.0f, 0.1f, 0.0f));
+		//trans = glm::rotate(trans, glm::radians(xFactor), glm::vec3(0.0f, 0.1f, 0.0f));
 		trans = glm::translate(trans, glm::vec3(0.0f, 0.0f, 0.0f));
 		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -199,6 +205,11 @@ int main() {
 		glUniform1i(isLit, false);
 		//send to shader
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glActiveTexture(GL_TEXTURE0);
+		GLuint hylianTexture = hylian.textures[hylian.materials[0].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, hylianTexture);
+
 		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -219,15 +230,51 @@ int main() {
 }
 
 void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		if (!isForward) {
+	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+		if (key == GLFW_KEY_W) {
 			isForward = true;
 		}
-		else {
-			isForward = false;
+		if (key == GLFW_KEY_A) {
+			isLeft = true;
+		}
+		if (key == GLFW_KEY_S) {
+			isBackward = true;
+		}
+		if (key == GLFW_KEY_D) {
+			isRight = true;
 		}
 	}
 	else if (action == GLFW_RELEASE) {
 		isForward = false;
+		isBackward = false;
+		isRight = false;
+		isLeft = false;
 	}
+}
+
+void cursorEnterCallback(GLFWwindow* window, double x, double y) {
+	if (firstEntered) {
+		xPos = x;
+		yPos = y;
+		firstEntered = false;
+	}
+
+	float xOffset = (x - xPos);
+	float yOffset = (yPos - y);
+
+	float sensitivity = 0.1f;
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	xPos = x;
+	yPos = y;
+
+	yaw += xOffset;
+	pitch += yOffset;
+
+	glm::vec3 front;
+	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front.y = sin(glm::radians(pitch));
+	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cameraTarget = glm::normalize(front);
 }
