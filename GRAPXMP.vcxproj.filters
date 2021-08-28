@@ -15,7 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Shaders\fragment.shader" />
     <None Include="Shaders\goraud_fragment.shader" />
     <None Include="Shaders\gouraud_vertex.shader" />
@@ -24,6 +23,17 @@
     <None Include="Shaders\skybox_fragment.shader" />
     <None Include="Shaders\skybox_vertex.shader" />
     <None Include="Shaders\vertex.shader" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\advanced.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\basic.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\build.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\credits.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\glew.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\glxew.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\index.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\install.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\log.html" />
+    <None Include="packages\glew-2.2.0.2.2.0.1\build\native\docs\wglew.html" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -49,5 +59,40 @@
     <ClInclude Include="tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="packages\glew-2.2.0.2.2.0.1\build\native\include\GL\eglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\glew-2.2.0.2.2.0.1\build\native\include\GL\glew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\glew-2.2.0.2.2.0.1\build\native\include\GL\glxew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="packages\glew-2.2.0.2.2.0.1\build\native\include\GL\wglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Skybox\back.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Skybox\bottom.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Skybox\cubemap.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Skybox\front.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Skybox\left.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Skybox\right.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Skybox\top.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

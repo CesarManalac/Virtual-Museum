@@ -29,7 +29,7 @@ int main() {
 
 	// create window 
 	GLFWwindow* window;
-	window = glfwCreateWindow(1024, 768, "Manalac_Cesar", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "Virtual Musuem", NULL, NULL);
 	if (window == NULL) {
 		fprintf(stderr, "Failed to load window! \n");
 		return -1;
@@ -43,6 +43,25 @@ int main() {
 		return -1;
 	}
 	glfwSetKeyCallback(window, keyCallBack);
+#pragma endregion
+
+#pragma region Mesh Loading
+
+	ObjData hylian;
+	LoadObjFile(&hylian, "Hylian_Shield.obj");
+	GLfloat hylianOffset[] = { 0.0f, 0.0f, 0.0f };
+	LoadObjToMemory(&hylian, 1.0f, hylianOffset);
+
+	std::vector <std::string>faces{
+		"right.png",
+		"left.png",
+		"bottom.png",
+		"top.png",
+		"front.png",
+		"back.png"
+	};
+	SkyboxData skybox = LoadSkybox("Assets/Skybox", faces);
+
 #pragma endregion
 
 #pragma region Shader Loading
@@ -165,16 +184,29 @@ int main() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 #pragma region Draw
-		
+		DrawSkybox(skybox, skyboxShaderProgram, view, projection);
+
+		glBindVertexArray(hylian.vaoId);
+		glUseProgram(shaderProgram);
+
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(xFactor), glm::vec3(0.0f, 0.1f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(0.0f, 0.0f, 0.0f));
+		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
+
 		glm::mat4 normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
+		glUniform1i(isLit, false);
 		//send to shader
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		currentTime = glfwGetTime();
 		deltaTime = currentTime - prevTime;
 		prevTime = currentTime;
 		xFactor += deltaTime * 20;
+
 
 		//--- stop drawing here ---
 #pragma endregion
@@ -194,7 +226,6 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 		else {
 			isForward = false;
 		}
-
 	}
 	else if (action == GLFW_RELEASE) {
 		isForward = false;
