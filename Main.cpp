@@ -103,7 +103,7 @@ int main() {
 
 	// var for rotations
 	float xFactor = 0.0f;
-	float xSpeed = 5.0f;
+	float xSpeed = 10.0f;
 	float currentTime = glfwGetTime();
 	float prevTime = 0.0f;
 	float deltaTime = 0.0f;
@@ -196,8 +196,8 @@ int main() {
 		glUseProgram(shaderProgram);
 
 		trans = glm::mat4(1.0f);
-		//trans = glm::rotate(trans, glm::radians(xFactor), glm::vec3(0.0f, 0.1f, 0.0f));
-		trans = glm::translate(trans, glm::vec3(0.0f, 0.0f, 0.0f));
+		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(50.0f, -10.0f, -50.0f));
 		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		glm::mat4 normalTrans = glm::transpose(glm::inverse(trans));
@@ -245,10 +245,18 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 		}
 	}
 	else if (action == GLFW_RELEASE) {
-		isForward = false;
-		isBackward = false;
-		isRight = false;
-		isLeft = false;
+		if (key == GLFW_KEY_W) {
+			isForward = false;
+		}
+		if (key == GLFW_KEY_A) {
+			isLeft = false;
+		}
+		if (key == GLFW_KEY_S) {
+			isBackward = false;
+		}
+		if (key == GLFW_KEY_D) {
+			isRight = false;
+		}
 	}
 }
 
