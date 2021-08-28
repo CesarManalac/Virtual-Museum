@@ -1,1 +1,28 @@
-﻿  GRAPXMP.vcxproj -> C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\x64\Debug\GRAPXMP.exe
+﻿  Main.cpp
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(8,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\obj_mesh.h(175,36): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=unsigned int
+          ]
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\obj_mesh.h(179,36): warning C4267: '=': conversion from 'size_t' to 'GLulong', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(107,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(216,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(262,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(263,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(276,35): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(277,15): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(278,35): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  GRAPXMP.vcxproj -> C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\x64\Debug\GRAPXMP.exe

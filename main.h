@@ -13,9 +13,6 @@ double xPos;
 double yPos;
 double currentX;
 double currentY;
-
-
-
 bool firstEntered = true;
 
 bool isForward = false;
