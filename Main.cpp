@@ -44,6 +44,8 @@ int main() {
 	}
 	glfwSetKeyCallback(window, keyCallBack);
 	glfwSetCursorPosCallback(window, cursorEnterCallback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 #pragma endregion
 
 #pragma region Mesh Loading
@@ -56,8 +58,8 @@ int main() {
 	std::vector <std::string>faces{
 		"right.png",
 		"left.png",
-		"bottom.png",
 		"top.png",
+		"bottom.png",
 		"front.png",
 		"back.png"
 	};
