@@ -55,6 +55,11 @@ int main() {
 	GLfloat hylianOffset[] = { 0.0f, 0.0f, 0.0f };
 	LoadObjToMemory(&hylian, 1.0f, hylianOffset);
 
+	ObjData pedestal;
+	LoadObjFile(&pedestal, "Pedestal.obj");
+	GLfloat pedestalOffset[] = { 0.0f, 0.0f, 0.0f };
+	LoadObjToMemory(&pedestal, 1.0f, pedestalOffset);
+
 	std::vector <std::string>faces{
 		"right.png",
 		"left.png",
@@ -174,14 +179,6 @@ int main() {
 			cameraPos + cameraTarget,
 			camerDirection
 		);
-		//else {
-		//	//cameraPos = glm::vec3(0.0f, 0.0f, -10.0f);
-		//	view = glm::lookAt(
-		//		/*glm::vec3(0.0f, 0.0f, -10.0f)*/
-		//		cameraPos,
-		//		glm::vec3(0, 0, 0),
-		//		glm::vec3(0.0f, 1.0f, 0.0f));
-		//}
 		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 #pragma endregion
@@ -215,6 +212,28 @@ int main() {
 		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+		// for the pedestal of the shield
+		glBindVertexArray(pedestal.vaoId);
+		glUseProgram(shaderProgram);
+
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(35.0f, -50.0f, -45.0f));
+		trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
+		normalTrans = glm::transpose(glm::inverse(trans));
+		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
+		glUniform1i(isLit, false);
+		//send to shader
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glActiveTexture(GL_TEXTURE0);
+		GLuint pedestalTexture = pedestal.textures[pedestal.materials[0].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, pedestalTexture);
+
+		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		currentTime = glfwGetTime();
 		deltaTime = currentTime - prevTime;
 		prevTime = currentTime;
@@ -245,6 +264,10 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 		if (key == GLFW_KEY_D) {
 			isRight = true;
 		}
+		// enables cursor for easier closing
+		if (key == GLFW_KEY_ESCAPE) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
 	}
 	else if (action == GLFW_RELEASE) {
 		if (key == GLFW_KEY_W) {
@@ -258,6 +281,9 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 		}
 		if (key == GLFW_KEY_D) {
 			isRight = false;
+		}
+		else {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 	}
 }
