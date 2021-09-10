@@ -60,6 +60,7 @@ int main() {
 	GLfloat pedestalOffset[] = { 0.0f, 0.0f, 0.0f };
 	LoadObjToMemory(&pedestal, 1.0f, pedestalOffset);
 
+
 	std::vector <std::string>faces{
 		"right.png",
 		"left.png",
@@ -76,7 +77,7 @@ int main() {
 
 	GLuint skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
 
-	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_fragment.shader");
+	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/fragment.shader");
 	glUseProgram(shaderProgram);
 
 	GLuint colorLoc = glGetUniformLocation(shaderProgram, "u_color");
@@ -209,13 +210,15 @@ int main() {
 		GLuint hylianTexture = hylian.textures[hylian.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, hylianTexture);
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// for the pedestal of the shield
 		glBindVertexArray(pedestal.vaoId);
 		glUseProgram(shaderProgram);
-
+		glDisable(GL_BLEND);
 		trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
 		trans = glm::translate(trans, glm::vec3(35.0f, -50.0f, -45.0f));
@@ -230,7 +233,8 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		GLuint pedestalTexture = pedestal.textures[pedestal.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, pedestalTexture);
-
+		/*glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);*/
 		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -267,6 +271,11 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 		// enables cursor for easier closing
 		if (key == GLFW_KEY_ESCAPE) {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			//stops character from moving
+			isForward = false;
+			isLeft = false;
+			isRight = false;
+			isBackward = false;
 		}
 	}
 	else if (action == GLFW_RELEASE) {
