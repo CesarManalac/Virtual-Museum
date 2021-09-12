@@ -52,6 +52,7 @@ int main() {
 
 	ObjData hylian;
 	LoadObjFile(&hylian, "Hylian_Shield.obj");
+	//LoadObjFile(&hylian, "Hylian_Shield.obj");
 	GLfloat hylianOffset[] = { 0.0f, 0.0f, 0.0f };
 	LoadObjToMemory(&hylian, 1.0f, hylianOffset);
 
@@ -77,7 +78,7 @@ int main() {
 
 	GLuint skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
 
-	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/fragment.shader");
+	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/earth_night_fragment.shader");
 	glUseProgram(shaderProgram);
 
 	GLuint colorLoc = glGetUniformLocation(shaderProgram, "u_color");
@@ -102,7 +103,15 @@ int main() {
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "u_light_pos");
+	GLuint lightDirLoc = glGetUniformLocation(shaderProgram, "u_light_dir");
+	GLuint diffuseTexLoc = glGetUniformLocation(shaderProgram, "texture_diffuse");
+	GLuint nightTexLoc = glGetUniformLocation(shaderProgram, "night_diffuse");
+
+	glUniform1i(diffuseTexLoc, 0);
+	glUniform1i(nightTexLoc, 1);
+
 	glUniform3f(lightPosLoc, 0.0f, 0.0f, 0.0f);
+	glUniform3f(lightDirLoc, 0.0f, 0.0f, -1.0f);
 
 #pragma endregion
 
@@ -192,6 +201,7 @@ int main() {
 #pragma region Draw
 		DrawSkybox(skybox, skyboxShaderProgram, view, projection);
 
+		// Hylian Shield
 		glBindVertexArray(hylian.vaoId);
 		glUseProgram(shaderProgram);
 
@@ -210,12 +220,18 @@ int main() {
 		GLuint hylianTexture = hylian.textures[hylian.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, hylianTexture);
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//tentative for texturing
+		glActiveTexture(GL_TEXTURE1);
+		GLuint nightTexture = hylian.textures[hylian.materials[1].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, nightTexture);
+
+		//glEnable(GL_BLEND);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		// for the pedestal of the shield
+		// PEDESTAL
 		glBindVertexArray(pedestal.vaoId);
 		glUseProgram(shaderProgram);
 		glDisable(GL_BLEND);
@@ -233,8 +249,7 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		GLuint pedestalTexture = pedestal.textures[pedestal.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, pedestalTexture);
-		/*glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);*/
+
 		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 

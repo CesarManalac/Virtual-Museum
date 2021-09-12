@@ -7,6 +7,7 @@ in vec3 Normal;
 uniform sampler2D texture_diffuse;
 
 uniform vec3 u_light_pos;
+uniform vec3 u_light_dir;
 uniform vec3 u_camera_pos;
 uniform vec3 u_ambient_color;
 
