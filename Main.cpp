@@ -51,13 +51,22 @@ int main() {
 #pragma region Mesh Loading
 
 	ObjData hylian;
-	LoadObjFile(&hylian, "Hylian_Shield.obj");
-	//LoadObjFile(&hylian, "Hylian_Shield.obj");
+	LoadObjFile(&hylian, "Hylian Shield/Hylian_Shield.obj");
 	GLfloat hylianOffset[] = { 0.0f, 0.0f, 0.0f };
 	LoadObjToMemory(&hylian, 1.0f, hylianOffset);
 
+	ObjData elucidator;
+	LoadObjFile(&elucidator, "Elucidator/elucidator.obj");
+	GLfloat elucidatorOffset[] = { 0.0f, 0.0f, 0.0f };
+	LoadObjToMemory(&elucidator, 1.0f, elucidatorOffset);
+
+	ObjData bar;
+	LoadObjFile(&bar, "Dark Repulser/dark_repulser.obj");
+	GLfloat barOffset[] = { 0.0f, 0.0f, 0.0f };
+	LoadObjToMemory(&bar, 1.0f, barOffset);
+
 	ObjData pedestal;
-	LoadObjFile(&pedestal, "Pedestal.obj");
+	LoadObjFile(&pedestal, "Pedestal/Pedestal.obj");
 	GLfloat pedestalOffset[] = { 0.0f, 0.0f, 0.0f };
 	LoadObjToMemory(&pedestal, 1.0f, pedestalOffset);
 
@@ -78,8 +87,17 @@ int main() {
 
 	GLuint skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
 
+	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_fragment.shader");
 	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/earth_night_fragment.shader");
+	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/test.shader");
 	glUseProgram(shaderProgram);
+
+	/*Guide...
+		eath_night_fragment shader for multitexturing
+		phong_normal_fragment for normal mapping
+		phong_fragment for lights and original texturing
+		test shader is a mix of all three, supposedly but normal mapping doesn't work properly
+	*/
 
 	GLuint colorLoc = glGetUniformLocation(shaderProgram, "u_color");
 	glUniform3f(colorLoc, 1.0f, 1.0f, 1.0f);
@@ -105,12 +123,18 @@ int main() {
 	GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "u_light_pos");
 	GLuint lightDirLoc = glGetUniformLocation(shaderProgram, "u_light_dir");
 	GLuint diffuseTexLoc = glGetUniformLocation(shaderProgram, "texture_diffuse");
-	GLuint nightTexLoc = glGetUniformLocation(shaderProgram, "night_diffuse");
+	GLuint firstTexLoc = glGetUniformLocation(shaderProgram, "first_diffuse");
+	//GLuint secondTexLoc = glGetUniformLocation(shaderProgram, "second_diffuse");
+	//GLuint thirdTexLoc = glGetUniformLocation(shaderProgram, "third_diffuse");
+	GLuint normalTexLoc = glGetUniformLocation(shaderProgram, "texture_normal");
 
 	glUniform1i(diffuseTexLoc, 0);
-	glUniform1i(nightTexLoc, 1);
+	glUniform1i(firstTexLoc, 1);
+	glUniform1i(normalTexLoc, 2);
+	//glUniform1i(secondTexLoc, 2);
+	//glUniform1i(thirdTexLoc, 3);
 
-	glUniform3f(lightPosLoc, 0.0f, 0.0f, 0.0f);
+	glUniform3f(lightPosLoc, 30.0f, -10.0f, 0.0f);
 	glUniform3f(lightDirLoc, 0.0f, 0.0f, -1.0f);
 
 #pragma endregion
@@ -184,7 +208,6 @@ int main() {
 #pragma region View
 		glm::mat4 view;
 		view = glm::lookAt(
-			/*glm::vec3(0.0f, -10.0f, 0.0f),*/
 			cameraPos,
 			cameraPos + cameraTarget,
 			camerDirection
@@ -206,8 +229,7 @@ int main() {
 		glUseProgram(shaderProgram);
 
 		trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
-		trans = glm::translate(trans, glm::vec3(50.0f, -10.0f, -50.0f));
+		trans = glm::translate(trans, glm::vec3(30.0f, -10.0f, -45.75f));
 		trans = glm::scale(trans, glm::vec3(1.0f, 1.0f, 1.0f));
 
 		glm::mat4 normalTrans = glm::transpose(glm::inverse(trans));
@@ -220,21 +242,67 @@ int main() {
 		GLuint hylianTexture = hylian.textures[hylian.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, hylianTexture);
 
-		//tentative for texturing
-		glActiveTexture(GL_TEXTURE1);
-		GLuint nightTexture = hylian.textures[hylian.materials[1].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, nightTexture);
-
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		// PEDESTAL
+		//------ Sword ------//
+		glBindVertexArray(elucidator.vaoId);
+		glUseProgram(shaderProgram);
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(35.0f, -40.0f, -45.0f));
+		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.1f));
+		trans = glm::scale(trans, glm::vec3(50.0f, 50.0f, 50.0f));
+
+		normalTrans = glm::transpose(glm::inverse(trans));
+		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
+		glUniform1i(isLit, true);
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glActiveTexture(GL_TEXTURE0);
+		GLuint elucidatorTexture = elucidator.textures[elucidator.materials[0].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, elucidatorTexture);
+
+		//glActiveTexture(GL_TEXTURE1);
+		//GLuint elucidator2Texture = elucidator.textures[elucidator.materials[1].diffuse_texname];
+		//glBindTexture(GL_TEXTURE_2D, elucidator2Texture);
+		//glActiveTexture(GL_TEXTURE1);
+		//GLuint elucidator3Texture = elucidator.textures[elucidator.materials[0].bump_texname];
+		//glBindTexture(GL_TEXTURE_2D, elucidator3Texture);
+
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glDrawElements(GL_TRIANGLES, elucidator.numFaces, GL_UNSIGNED_INT, (void*)0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//------ Dark Repulser -------//
+		glBindVertexArray(bar.vaoId);
+		glUseProgram(shaderProgram);
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.1f, 0.1f, 0.1f));
+		trans = glm::translate(trans, glm::vec3(15.0f, -60.0f, 50.0f));
+		trans = glm::scale(trans, glm::vec3(75.0f, 75.0f, 75.0f));
+
+		normalTrans = glm::transpose(glm::inverse(trans));
+		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
+		glUniform1i(isLit, false);
+		
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glActiveTexture(GL_TEXTURE0);
+		GLuint barTexture = bar.textures[bar.materials[0].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, barTexture);
+
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glDrawElements(GL_TRIANGLES, elucidator.numFaces, GL_UNSIGNED_INT, (void*)0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+		//------ PEDESTALS -------- //
+		
+		//------- First Pedestal -------//
 		glBindVertexArray(pedestal.vaoId);
 		glUseProgram(shaderProgram);
-		glDisable(GL_BLEND);
 		trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
 		trans = glm::translate(trans, glm::vec3(35.0f, -50.0f, -45.0f));
@@ -250,9 +318,43 @@ int main() {
 		GLuint pedestalTexture = pedestal.textures[pedestal.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, pedestalTexture);
 
+		glActiveTexture(GL_TEXTURE1);
+		GLuint pedestal2Texture = pedestal.textures[pedestal.materials[1].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, pedestal2Texture);
+
+		//------- Second Pedestal -------//
+		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
+
+		glBindVertexArray(pedestal.vaoId);
+		glUseProgram(shaderProgram);
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(0.f), glm::vec3(0.0f, 0.1f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(15.0f, -50.0f, -35.0f));
+		trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
+		normalTrans = glm::transpose(glm::inverse(trans));
+		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
+		glUniform1i(isLit, false);
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
+
+		//------- Third Pedestal -------//
+
+		glBindVertexArray(pedestal.vaoId);
+		glUseProgram(shaderProgram);
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(0.f), glm::vec3(0.0f, 0.1f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(75.0f, -50.0f, -35.0f));
+		trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
+		normalTrans = glm::transpose(glm::inverse(trans));
+		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
+		glUniform1i(isLit, false);
+		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
 		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
-
 		currentTime = glfwGetTime();
 		deltaTime = currentTime - prevTime;
 		prevTime = currentTime;

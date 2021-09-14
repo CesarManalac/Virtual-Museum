@@ -1,26 +1,26 @@
 ﻿  Main.cpp
 C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(8,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\obj_mesh.h(178,36): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\obj_mesh.h(192,36): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
           with
           [
               _Ty=unsigned int
           ]
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\obj_mesh.h(182,36): warning C4267: '=': conversion from 'size_t' to 'GLulong', possible loss of data
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(124,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(257,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(323,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(324,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(337,35): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\obj_mesh.h(196,36): warning C4267: '=': conversion from 'size_t' to 'GLulong', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(147,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(357,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(423,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(424,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(437,35): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(338,15): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(438,15): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(339,35): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Cedric\Desktop\SourceTree\Virtual Museum\Main.cpp(439,35): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
