@@ -40,6 +40,10 @@ void main()
         tbnNormal = tbnNormal * 2.0 - 1.0; // converting from pixel to vector
         tbnNormal = TBN * tbnNormal;
 
+        if (!u_normals) {
+            tbnNormal = Normal;
+        }
+
         float specularStrength = 0.3;
         vec3 viewDir = normalize(u_camera_pos - FragPos);
         vec3 reflectDir = reflect(-lightVector, tbnNormal);
