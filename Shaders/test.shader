@@ -8,8 +8,8 @@ in mat3 TBN;
 uniform sampler2D texture_diffuse;
 uniform sampler2D texture_normal;
 uniform sampler2D first_diffuse;
-uniform sampler2D second_diffuse;
-uniform sampler2D third_diffuse;
+//uniform sampler2D second_diffuse;
+//uniform sampler2D third_diffuse;
 
 uniform vec3 u_light_pos;
 //uniform vec3 u_light_dir;
@@ -17,7 +17,8 @@ uniform vec3 u_camera_pos;
 uniform vec3 u_ambient_color;
 
 uniform bool u_lit;
-
+uniform bool u_multi;
+uniform bool u_normals;
 float attenuate(float value, float maximum)
 {
     float clampedValue = min(value, maximum);
@@ -52,13 +53,17 @@ void main()
         vec3 diffuse = diff * lightColor;
         vec3 ambient = u_ambient_color * lightColor;
 
-        FragColor = vec4(ambient + (diffuse + specular) * gradient, 1.0) * (texture(texture_diffuse, UV)
-            + texture(first_diffuse, UV) + texture(second_diffuse, UV) + texture(third_diffuse, UV));
+        if (u_multi)
+            FragColor = vec4(ambient + (diffuse + specular) * gradient, 1.0) * texture(texture_diffuse, UV) + texture(first_diffuse, UV);
+        else
+            FragColor = vec4(ambient + (diffuse + specular) * gradient, 1.0) * texture(texture_diffuse, UV);
     }
 
     else
     {
-        vec3 tbnNormal = texture(texture_normal, UV).rgb;
-        FragColor = texture(texture_diffuse, UV) + texture(first_diffuse, UV);
+        if (u_multi)
+            FragColor = texture(texture_diffuse, UV) + texture(first_diffuse, UV);
+        else
+            FragColor = texture(texture_diffuse, UV);
     }
 }

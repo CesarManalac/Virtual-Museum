@@ -55,10 +55,11 @@ int main() {
 	GLfloat hylianOffset[] = { 0.0f, 0.0f, 0.0f };
 	LoadObjToMemory(&hylian, 1.0f, hylianOffset);
 
-	ObjData elucidator;
-	LoadObjFile(&elucidator, "Elucidator/elucidator.obj");
-	GLfloat elucidatorOffset[] = { 0.0f, 0.0f, 0.0f };
-	LoadObjToMemory(&elucidator, 1.0f, elucidatorOffset);
+	ObjData rose;
+	//LoadObjFile(&elucidator, "Elucidator/elucidator.obj");
+	LoadObjFile(&rose, "rose/Red_rose_SF.obj");
+	GLfloat roseOffset[] = { 0.0f, 0.0f, 0.0f };
+	LoadObjToMemory(&rose, 1.0f, roseOffset);
 
 	ObjData bar;
 	LoadObjFile(&bar, "Dark Repulser/dark_repulser.obj");
@@ -88,8 +89,8 @@ int main() {
 	GLuint skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
 
 	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_fragment.shader");
-	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/earth_night_fragment.shader");
-	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/test.shader");
+	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/earth_night_fragment.shader");
+	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/test.shader");
 	glUseProgram(shaderProgram);
 
 	/*Guide...
@@ -111,7 +112,8 @@ int main() {
 	GLuint cameraPosLoc = glGetUniformLocation(shaderProgram, "u_camera_pos");
 	GLuint ambientColorLoc = glGetUniformLocation(shaderProgram, "u_ambient_color");
 	GLuint isLit = glGetUniformLocation(shaderProgram, "u_lit");
-
+	GLuint isMulti = glGetUniformLocation(shaderProgram, "u_multi");
+	GLuint hasNormal = glGetUniformLocation(shaderProgram, "u_normals");
 	glUniform3f(ambientColorLoc, 0.1f, 0.1f, 0.1f);
 
 	glm::mat4 trans = glm::mat4(1.0f); // identity
@@ -124,17 +126,13 @@ int main() {
 	GLuint lightDirLoc = glGetUniformLocation(shaderProgram, "u_light_dir");
 	GLuint diffuseTexLoc = glGetUniformLocation(shaderProgram, "texture_diffuse");
 	GLuint firstTexLoc = glGetUniformLocation(shaderProgram, "first_diffuse");
-	//GLuint secondTexLoc = glGetUniformLocation(shaderProgram, "second_diffuse");
-	//GLuint thirdTexLoc = glGetUniformLocation(shaderProgram, "third_diffuse");
 	GLuint normalTexLoc = glGetUniformLocation(shaderProgram, "texture_normal");
 
 	glUniform1i(diffuseTexLoc, 0);
 	glUniform1i(firstTexLoc, 1);
 	glUniform1i(normalTexLoc, 2);
-	//glUniform1i(secondTexLoc, 2);
-	//glUniform1i(thirdTexLoc, 3);
 
-	glUniform3f(lightPosLoc, 30.0f, -10.0f, 0.0f);
+	glUniform3f(lightPosLoc, 15.0f, -50.0f, -35.0f);
 	glUniform3f(lightDirLoc, 0.0f, 0.0f, -1.0f);
 
 #pragma endregion
@@ -235,9 +233,10 @@ int main() {
 		glm::mat4 normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniform1i(isLit, false);
+		glUniform1i(hasNormal, false);
 		//send to shader
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
+		glUniform1i(isMulti, false);
 		glActiveTexture(GL_TEXTURE0);
 		GLuint hylianTexture = hylian.textures[hylian.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, hylianTexture);
@@ -246,33 +245,31 @@ int main() {
 		glDrawElements(GL_TRIANGLES, hylian.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		//------ Sword ------//
-		glBindVertexArray(elucidator.vaoId);
+		//------ Rose ------//
+		glBindVertexArray(rose.vaoId);
 		glUseProgram(shaderProgram);
 		trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
-		trans = glm::translate(trans, glm::vec3(35.0f, -40.0f, -45.0f));
-		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.1f));
-		trans = glm::scale(trans, glm::vec3(50.0f, 50.0f, 50.0f));
+		trans = glm::translate(trans, glm::vec3(35.0f, -50.0f, -45.0f));
+		trans = glm::scale(trans, glm::vec3(25.0f, 25.0f, 25.0f));
 
+		glUniform1i(isMulti, false);
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniform1i(isLit, true);
+		glUniform1i(hasNormal, true);
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glActiveTexture(GL_TEXTURE0);
-		GLuint elucidatorTexture = elucidator.textures[elucidator.materials[0].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, elucidatorTexture);
+		GLuint roseTexture = rose.textures[rose.materials[0].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, roseTexture);
 
-		//glActiveTexture(GL_TEXTURE1);
-		//GLuint elucidator2Texture = elucidator.textures[elucidator.materials[1].diffuse_texname];
-		//glBindTexture(GL_TEXTURE_2D, elucidator2Texture);
-		//glActiveTexture(GL_TEXTURE1);
-		//GLuint elucidator3Texture = elucidator.textures[elucidator.materials[0].bump_texname];
-		//glBindTexture(GL_TEXTURE_2D, elucidator3Texture);
+		glActiveTexture(GL_TEXTURE2);
+		GLuint elucidatorTexture = rose.textures[rose.materials[0].bump_texname];
+		glBindTexture(GL_TEXTURE_2D, roseTexture);
 
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-		glDrawElements(GL_TRIANGLES, elucidator.numFaces, GL_UNSIGNED_INT, (void*)0);
+		glDrawElements(GL_TRIANGLES, rose.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//------ Dark Repulser -------//
@@ -282,19 +279,25 @@ int main() {
 		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.1f, 0.1f, 0.1f));
 		trans = glm::translate(trans, glm::vec3(15.0f, -60.0f, 50.0f));
 		trans = glm::scale(trans, glm::vec3(75.0f, 75.0f, 75.0f));
-
+		
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniform1i(isLit, false);
-		
+		glUniform1i(isMulti, false);
+		glUniform1i(hasNormal, false);
+
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glActiveTexture(GL_TEXTURE0);
 		GLuint barTexture = bar.textures[bar.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, barTexture);
 
+		//glActiveTexture(GL_TEXTURE1);
+		//GLuint barTexture2 = bar.textures[bar.materials[0].bump_texname];
+		//glBindTexture(GL_TEXTURE_2D, barTexture2);
+
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-		glDrawElements(GL_TRIANGLES, elucidator.numFaces, GL_UNSIGNED_INT, (void*)0);
+		glDrawElements(GL_TRIANGLES, rose.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 
@@ -307,20 +310,17 @@ int main() {
 		trans = glm::rotate(trans, glm::radians(90.f), glm::vec3(0.0f, 0.1f, 0.0f));
 		trans = glm::translate(trans, glm::vec3(35.0f, -50.0f, -45.0f));
 		trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
-
+		glUniform1i(isMulti, false);
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniform1i(isLit, false);
+		glUniform1i(hasNormal, false);
 		//send to shader
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glActiveTexture(GL_TEXTURE0);
 		GLuint pedestalTexture = pedestal.textures[pedestal.materials[0].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, pedestalTexture);
-
-		glActiveTexture(GL_TEXTURE1);
-		GLuint pedestal2Texture = pedestal.textures[pedestal.materials[1].diffuse_texname];
-		glBindTexture(GL_TEXTURE_2D, pedestal2Texture);
+		glBindTexture(GL_TEXTURE_2D, pedestalTexture);		
 
 		//------- Second Pedestal -------//
 		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
@@ -334,7 +334,6 @@ int main() {
 
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniform1i(isLit, false);
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
@@ -351,7 +350,12 @@ int main() {
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniform1i(isLit, false);
+		glUniform1i(isMulti, true);
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+		glActiveTexture(GL_TEXTURE1);
+		GLuint pedestal2Texture = pedestal.textures[pedestal.materials[1].diffuse_texname];
+		glBindTexture(GL_TEXTURE_2D, pedestal2Texture);
 
 		glDrawElements(GL_TRIANGLES, pedestal.numFaces, GL_UNSIGNED_INT, (void*)0);
 		glBindTexture(GL_TEXTURE_2D, 0);
