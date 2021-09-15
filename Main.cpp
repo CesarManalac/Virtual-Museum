@@ -122,8 +122,6 @@ int main() {
 	// define projection matrix
 	glm::mat4 projection = glm::mat4(1.0f);
 
-	GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "u_light_pos");
-	GLuint lightDirLoc = glGetUniformLocation(shaderProgram, "u_light_dir");
 	GLuint diffuseTexLoc = glGetUniformLocation(shaderProgram, "texture_diffuse");
 	GLuint firstTexLoc = glGetUniformLocation(shaderProgram, "first_diffuse");
 	GLuint normalTexLoc = glGetUniformLocation(shaderProgram, "texture_normal");
@@ -132,8 +130,47 @@ int main() {
 	glUniform1i(firstTexLoc, 1);
 	glUniform1i(normalTexLoc, 2);
 
-	glUniform3f(lightPosLoc, 15.0f, -50.0f, -35.0f);
-	glUniform3f(lightDirLoc, 0.0f, 0.0f, -1.0f);
+	GLuint matDiff = glGetUniformLocation(shaderProgram, "material.diffuse");
+	GLuint matSpec = glGetUniformLocation(shaderProgram, "material.specular");
+	GLuint matShin = glGetUniformLocation(shaderProgram, "material.shininess");
+
+	glUniform1d(matDiff, 0);
+	glUniform1d(matSpec, 1);
+	glUniform1f(matShin, 32.0f);
+
+	GLuint pointLightPos = glGetUniformLocation(shaderProgram, "pointLights[0].position");
+	GLuint pointLightCon = glGetUniformLocation(shaderProgram, "pointLights[0].constant");
+	GLuint pointLightLin = glGetUniformLocation(shaderProgram, "pointLights[0].linear");
+	GLuint pointLightQuad = glGetUniformLocation(shaderProgram, "pointLights[0].quadratic");
+	GLuint pointLightDiff = glGetUniformLocation(shaderProgram, "pointLights[0].diffuse");
+	GLuint pointLightSpec = glGetUniformLocation(shaderProgram, "pointLights[0].specular");
+
+	glUniform3f(pointLightPos, 5.0, 0.0, 0.0);
+	glUniform1f(pointLightCon, 1.0);
+	glUniform1f(pointLightLin, 0.09);
+	glUniform1f(pointLightQuad, 0.032);
+	glUniform3f(pointLightDiff, 3.0, 3.0, 3.0);
+	glUniform3f(pointLightSpec, 3.0, 3.0, 3.0);
+
+	GLuint dirLightDir = glGetUniformLocation(shaderProgram, "dirLight.direction");
+	GLuint dirLightAmb = glGetUniformLocation(shaderProgram, "dirLight.ambient");
+	GLuint dirLightDiff = glGetUniformLocation(shaderProgram, "dirLight.diffuse");
+	GLuint dirLightSpec = glGetUniformLocation(shaderProgram, "dirLight.specular");
+
+	glUniform3f(dirLightDir, 45.0f, 0.0f, 0.0f);
+	glUniform3f(dirLightAmb, 0.05f, 0.05f, 0.05f);
+	glUniform3f(dirLightDiff, 1.0f, 1.0f, 1.0f);
+	glUniform3f(dirLightSpec, 1.0f, 1.0f, 1.0f);
+
+	GLuint spotLightPos = glGetUniformLocation(shaderProgram, "spotLight.position");
+	GLuint spotLightDir = glGetUniformLocation(shaderProgram, "spotLight.direction");
+	GLuint spotLightDiff = glGetUniformLocation(shaderProgram, "spotLight.diffusion");
+	GLuint spotLightSpec = glGetUniformLocation(shaderProgram, "spotLight.specular");
+	GLuint spotLightCon = glGetUniformLocation(shaderProgram, "spotLight.constant");
+	GLuint spotLightLin = glGetUniformLocation(shaderProgram, "spotLight.linear");
+	GLuint spotLightQuad = glGetUniformLocation(shaderProgram, "spotLight.quadratic");
+	GLuint spotLightCutOff = glGetUniformLocation(shaderProgram, "spotLight.cutOff");
+	GLuint spotLightOuterCutOff = glGetUniformLocation(shaderProgram, "spotLight.outerCutOff");
 
 #pragma endregion
 
@@ -212,6 +249,18 @@ int main() {
 		);
 		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		glUniform3f(spotLightPos, cameraPos.x, cameraPos.y, cameraPos.z);
+		glUniform3f(spotLightDir, cameraPos.x + cameraTarget.x, cameraPos.y + cameraTarget.y, cameraPos.z + cameraTarget.z);
+		glUniform3f(spotLightDiff, 1.0, 1.0, 1.0);
+		glUniform3f(spotLightSpec, 1.0, 1.0, 1.0);
+		glUniform1f(spotLightCon, 1.0);
+		glUniform1f(spotLightLin, 0.09);
+		glUniform1f(spotLightQuad, 0.032);
+		glUniform1f(spotLightCutOff, cos(glm::radians(12.5f)));
+		glUniform1f(spotLightOuterCutOff, cos(glm::radians(15.0f)));
+
+
 #pragma endregion
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
