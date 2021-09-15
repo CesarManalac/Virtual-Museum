@@ -2,10 +2,13 @@
 layout(location = 0) in vec3 a_Pos;
 layout(location = 1) in vec2 a_UV;
 layout(location = 2) in vec3 a_Normal;
+layout(location = 3) in vec3 a_tangent;
+layout(location = 4) in vec3 a_bitangent;
 
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 UV;
+out mat3 TBN;
 
 uniform mat4 u_model;
 uniform mat4 u_view;
@@ -14,9 +17,13 @@ uniform mat4 u_normal;
 
 void main()
 {
-	FragPos = vec3(u_model * vec4(a_Pos, 1.0));
-	Normal = normalize(mat3(u_normal) * a_Normal);
-	UV = a_UV;
+    gl_Position = u_projection * u_view * u_model * vec4(a_Pos, 1.0);
+    UV = a_UV;
 
-	gl_Position = u_projection * u_view * vec4(FragPos, 1.0);
+    Normal = normalize(mat3(u_normal) * a_Normal);
+    vec3 T = normalize(mat3(u_normal) * a_tangent);
+    vec3 B = normalize(mat3(u_normal) * a_bitangent);
+    TBN = mat3(T, B, Normal);
+
+    FragPos = vec3(u_model * vec4(a_Pos, 1.0));
 }

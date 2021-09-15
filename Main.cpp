@@ -88,17 +88,9 @@ int main() {
 
 	GLuint skyboxShaderProgram = LoadShaders("Shaders/skybox_vertex.shader", "Shaders/skybox_fragment.shader");
 
-	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/phong_fragment.shader");
-	//GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/earth_night_fragment.shader");
-	GLuint shaderProgram = LoadShaders("Shaders/phong_vertex.shader", "Shaders/test.shader");
+	GLuint shaderProgram = LoadShaders("Shaders/multi_vertex.shader", "Shaders/multi_fragment.shader");
 	glUseProgram(shaderProgram);
 
-	/*Guide...
-		eath_night_fragment shader for multitexturing
-		phong_normal_fragment for normal mapping
-		phong_fragment for lights and original texturing
-		test shader is a mix of all three, supposedly but normal mapping doesn't work properly
-	*/
 
 	GLuint colorLoc = glGetUniformLocation(shaderProgram, "u_color");
 	glUniform3f(colorLoc, 1.0f, 1.0f, 1.0f);
@@ -110,11 +102,10 @@ int main() {
 
 	GLuint normalTransformLoc = glGetUniformLocation(shaderProgram, "u_normal");
 	GLuint cameraPosLoc = glGetUniformLocation(shaderProgram, "u_camera_pos");
-	GLuint ambientColorLoc = glGetUniformLocation(shaderProgram, "u_ambient_color");
-	GLuint isLit = glGetUniformLocation(shaderProgram, "u_lit");
+	//GLuint ambientColorLoc = glGetUniformLocation(shaderProgram, "u_ambient_color");
 	GLuint isMulti = glGetUniformLocation(shaderProgram, "u_multi");
 	GLuint hasNormal = glGetUniformLocation(shaderProgram, "u_normals");
-	glUniform3f(ambientColorLoc, 0.1f, 0.1f, 0.1f);
+	//glUniform3f(ambientColorLoc, 0.1f, 0.1f, 0.1f);
 
 	glm::mat4 trans = glm::mat4(1.0f); // identity
 	glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -122,6 +113,7 @@ int main() {
 	// define projection matrix
 	glm::mat4 projection = glm::mat4(1.0f);
 
+	// for textures
 	GLuint diffuseTexLoc = glGetUniformLocation(shaderProgram, "texture_diffuse");
 	GLuint firstTexLoc = glGetUniformLocation(shaderProgram, "first_diffuse");
 	GLuint normalTexLoc = glGetUniformLocation(shaderProgram, "texture_normal");
@@ -138,39 +130,39 @@ int main() {
 	glUniform1d(matSpec, 1);
 	glUniform1f(matShin, 32.0f);
 
-	GLuint pointLightPos = glGetUniformLocation(shaderProgram, "pointLights[0].position");
-	GLuint pointLightCon = glGetUniformLocation(shaderProgram, "pointLights[0].constant");
-	GLuint pointLightLin = glGetUniformLocation(shaderProgram, "pointLights[0].linear");
-	GLuint pointLightQuad = glGetUniformLocation(shaderProgram, "pointLights[0].quadratic");
-	GLuint pointLightDiff = glGetUniformLocation(shaderProgram, "pointLights[0].diffuse");
-	GLuint pointLightSpec = glGetUniformLocation(shaderProgram, "pointLights[0].specular");
+	//GLuint pointLightPos = glGetUniformLocation(shaderProgram, "pointLights[0].position");
+	//GLuint pointLightCon = glGetUniformLocation(shaderProgram, "pointLights[0].constant");
+	//GLuint pointLightLin = glGetUniformLocation(shaderProgram, "pointLights[0].linear");
+	//GLuint pointLightQuad = glGetUniformLocation(shaderProgram, "pointLights[0].quadratic");
+	//GLuint pointLightDiff = glGetUniformLocation(shaderProgram, "pointLights[0].diffuse");
+	//GLuint pointLightSpec = glGetUniformLocation(shaderProgram, "pointLights[0].specular");
 
-	glUniform3f(pointLightPos, 5.0, 0.0, 0.0);
-	glUniform1f(pointLightCon, 1.0);
-	glUniform1f(pointLightLin, 0.09);
-	glUniform1f(pointLightQuad, 0.032);
-	glUniform3f(pointLightDiff, 3.0, 3.0, 3.0);
-	glUniform3f(pointLightSpec, 3.0, 3.0, 3.0);
+	//glUniform3f(pointLightPos, 5.0, 0.0, 0.0);
+	//glUniform1f(pointLightCon, 1.0);
+	//glUniform1f(pointLightLin, 0.09);
+	//glUniform1f(pointLightQuad, 0.032);
+	//glUniform3f(pointLightDiff, 3.0, 3.0, 3.0);
+	//glUniform3f(pointLightSpec, 3.0, 3.0, 3.0);
 
-	GLuint dirLightDir = glGetUniformLocation(shaderProgram, "dirLight.direction");
-	GLuint dirLightAmb = glGetUniformLocation(shaderProgram, "dirLight.ambient");
-	GLuint dirLightDiff = glGetUniformLocation(shaderProgram, "dirLight.diffuse");
-	GLuint dirLightSpec = glGetUniformLocation(shaderProgram, "dirLight.specular");
+	//GLuint dirLightDir = glGetUniformLocation(shaderProgram, "dirLight.direction");
+	//GLuint dirLightAmb = glGetUniformLocation(shaderProgram, "dirLight.ambient");
+	//GLuint dirLightDiff = glGetUniformLocation(shaderProgram, "dirLight.diffuse");
+	//GLuint dirLightSpec = glGetUniformLocation(shaderProgram, "dirLight.specular");
 
-	glUniform3f(dirLightDir, 45.0f, 0.0f, 0.0f);
-	glUniform3f(dirLightAmb, 0.05f, 0.05f, 0.05f);
-	glUniform3f(dirLightDiff, 1.0f, 1.0f, 1.0f);
-	glUniform3f(dirLightSpec, 1.0f, 1.0f, 1.0f);
+	//glUniform3f(dirLightDir, 45.0f, 0.0f, 0.0f);
+	//glUniform3f(dirLightAmb, 0.05f, 0.05f, 0.05f);
+	//glUniform3f(dirLightDiff, 1.0f, 1.0f, 1.0f);
+	//glUniform3f(dirLightSpec, 1.0f, 1.0f, 1.0f);
 
-	GLuint spotLightPos = glGetUniformLocation(shaderProgram, "spotLight.position");
-	GLuint spotLightDir = glGetUniformLocation(shaderProgram, "spotLight.direction");
-	GLuint spotLightDiff = glGetUniformLocation(shaderProgram, "spotLight.diffusion");
-	GLuint spotLightSpec = glGetUniformLocation(shaderProgram, "spotLight.specular");
-	GLuint spotLightCon = glGetUniformLocation(shaderProgram, "spotLight.constant");
-	GLuint spotLightLin = glGetUniformLocation(shaderProgram, "spotLight.linear");
-	GLuint spotLightQuad = glGetUniformLocation(shaderProgram, "spotLight.quadratic");
-	GLuint spotLightCutOff = glGetUniformLocation(shaderProgram, "spotLight.cutOff");
-	GLuint spotLightOuterCutOff = glGetUniformLocation(shaderProgram, "spotLight.outerCutOff");
+	//GLuint spotLightPos = glGetUniformLocation(shaderProgram, "spotLight.position");
+	//GLuint spotLightDir = glGetUniformLocation(shaderProgram, "spotLight.direction");
+	//GLuint spotLightDiff = glGetUniformLocation(shaderProgram, "spotLight.diffusion");
+	//GLuint spotLightSpec = glGetUniformLocation(shaderProgram, "spotLight.specular");
+	//GLuint spotLightCon = glGetUniformLocation(shaderProgram, "spotLight.constant");
+	//GLuint spotLightLin = glGetUniformLocation(shaderProgram, "spotLight.linear");
+	//GLuint spotLightQuad = glGetUniformLocation(shaderProgram, "spotLight.quadratic");
+	//GLuint spotLightCutOff = glGetUniformLocation(shaderProgram, "spotLight.cutOff");
+	//GLuint spotLightOuterCutOff = glGetUniformLocation(shaderProgram, "spotLight.outerCutOff");
 
 #pragma endregion
 
@@ -250,15 +242,15 @@ int main() {
 		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		glUniform3f(spotLightPos, cameraPos.x, cameraPos.y, cameraPos.z);
-		glUniform3f(spotLightDir, cameraPos.x + cameraTarget.x, cameraPos.y + cameraTarget.y, cameraPos.z + cameraTarget.z);
-		glUniform3f(spotLightDiff, 1.0, 1.0, 1.0);
-		glUniform3f(spotLightSpec, 1.0, 1.0, 1.0);
-		glUniform1f(spotLightCon, 1.0);
-		glUniform1f(spotLightLin, 0.09);
-		glUniform1f(spotLightQuad, 0.032);
-		glUniform1f(spotLightCutOff, cos(glm::radians(12.5f)));
-		glUniform1f(spotLightOuterCutOff, cos(glm::radians(15.0f)));
+		//glUniform3f(spotLightPos, cameraPos.x, cameraPos.y, cameraPos.z);
+		//glUniform3f(spotLightDir, cameraPos.x + cameraTarget.x, cameraPos.y + cameraTarget.y, cameraPos.z + cameraTarget.z);
+		//glUniform3f(spotLightDiff, 1.0, 1.0, 1.0);
+		//glUniform3f(spotLightSpec, 1.0, 1.0, 1.0);
+		//glUniform1f(spotLightCon, 1.0);
+		//glUniform1f(spotLightLin, 0.09);
+		//glUniform1f(spotLightQuad, 0.032);
+		//glUniform1f(spotLightCutOff, cos(glm::radians(12.5f)));
+		//glUniform1f(spotLightOuterCutOff, cos(glm::radians(15.0f)));
 
 
 #pragma endregion
@@ -281,7 +273,6 @@ int main() {
 
 		glm::mat4 normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniform1i(isLit, false);
 		glUniform1i(hasNormal, false);
 		//send to shader
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -305,17 +296,16 @@ int main() {
 		glUniform1i(isMulti, false);
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniform1i(isLit, true);
-		glUniform1i(hasNormal, true);
+		glUniform1i(hasNormal, false);
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		glActiveTexture(GL_TEXTURE0);
 		GLuint roseTexture = rose.textures[rose.materials[0].diffuse_texname];
 		glBindTexture(GL_TEXTURE_2D, roseTexture);
 
-		glActiveTexture(GL_TEXTURE2);
-		GLuint elucidatorTexture = rose.textures[rose.materials[0].bump_texname];
-		glBindTexture(GL_TEXTURE_2D, roseTexture);
+		//glActiveTexture(GL_TEXTURE2);
+		//GLuint elucidatorTexture = rose.textures[rose.materials[0].bump_texname];
+		//glBindTexture(GL_TEXTURE_2D, roseTexture);
 
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		glDrawElements(GL_TRIANGLES, rose.numFaces, GL_UNSIGNED_INT, (void*)0);
@@ -331,7 +321,6 @@ int main() {
 		
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniform1i(isLit, false);
 		glUniform1i(isMulti, false);
 		glUniform1i(hasNormal, false);
 
@@ -362,7 +351,6 @@ int main() {
 		glUniform1i(isMulti, false);
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniform1i(isLit, false);
 		glUniform1i(hasNormal, false);
 		//send to shader
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
@@ -398,7 +386,6 @@ int main() {
 
 		normalTrans = glm::transpose(glm::inverse(trans));
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
-		glUniform1i(isLit, false);
 		glUniform1i(isMulti, true);
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
