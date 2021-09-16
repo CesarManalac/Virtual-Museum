@@ -67,32 +67,31 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-	vec3 norm;
+	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(u_view - FragPos);
 
-	vec3 tbnNormal = texture(texture_normal, UV).rgb;
-	tbnNormal = tbnNormal * 2.0 - 1.0; // converting from pixel to vector
-	tbnNormal = normalize(TBN * tbnNormal);
-
-	if (!u_normals) { //if it doesnt have normals
-		norm = normalize(Normal);
-	}
-	else {
-		norm = tbnNormal;
-	}
+	//vec3 tbnNormal = texture(texture_normal, UV).rgb;
+	//tbnNormal = tbnNormal * 2.0 - 1.0; // converting from pixel to vector
+	//tbnNormal = normalize(TBN * tbnNormal);
+	//if (!u_normals) { //if it doesnt have normals
+	//	norm = normalize(Normal);
+	//}
+	//else {
+	//	norm = tbnNormal;
+	//}
 
 	vec3 result = CalcDirLight(dirLight, norm, viewDir);
 
-	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
-		result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
-	}
+	//for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+	//	result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
+	//}
 
-	result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
-
-	FragColor = vec4(result, 1.0) * texture(texture_diffuse, UV);
-	if (u_multi) {
-		FragColor = vec4(result, 1.0) * texture(texture_diffuse, UV) + texture(first_diffuse, UV);
-	}
+	//result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
+	FragColor = vec4(result, 1.0);
+	//FragColor = vec4(result, 1.0) * texture(texture_diffuse, UV);
+	//if (u_multi) {
+	//	FragColor = vec4(result, 1.0) * texture(texture_diffuse, UV) + texture(first_diffuse, UV);
+	//}
 
 
 }

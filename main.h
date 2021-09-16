@@ -17,7 +17,7 @@ bool firstEntered = true;
 
 bool isForward = false;
 bool isBackward = false;
-bool isUp = false;
-bool isDown = false;
+bool isRotating = true;
+bool wasPressed = false;
 bool isLeft = false;
 bool isRight = false;
