@@ -128,6 +128,7 @@ int main() {
 	GLuint dirLightSpec = glGetUniformLocation(shaderProgram, "dirLight.specular");
 
 	glUniform3f(dirLightDir, 45.0f, 0.0f, 0.0f);
+	glm::vec3 lightDir = glm::vec3(0,1,0);
 	glUniform3f(dirLightAmb, 0.05f, 0.05f, 0.05f);
 	glUniform3f(dirLightDiff, 1.0f, 1.0f, 1.0f);
 	glUniform3f(dirLightSpec, 1.0f, 1.0f, 1.0f);
@@ -493,7 +494,14 @@ int main() {
 		rotFactor += deltaTime * 10;
 		prevTime = currentTime;
 
+		if (isRotating) {
+			glm::mat4 lightDirMatrix = glm::mat4(1.0f);
+			lightDirMatrix = glm::rotate(lightDirMatrix, glm::radians(rotFactor), glm::vec3(1, 0, 1));
+			glm::vec3 lightVector = (glm::mat3)lightDirMatrix * lightDir;
+			glUniform3f(dirLightDir, lightVector.x, lightVector.y, lightVector.z);
+		}
 
+		
 		//--- stop drawing here ---
 #pragma endregion
 
@@ -517,6 +525,16 @@ void keyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods
 		}
 		if (key == GLFW_KEY_D) {
 			isRight = true;
+		}
+		if (key == GLFW_KEY_P) {
+			if (wasPressed) {
+				wasPressed = false;
+				isRotating = true;
+			}
+			else {
+				isRotating = false;
+				wasPressed = true;
+			}
 		}
 		// enables cursor for easier closing
 		if (key == GLFW_KEY_ESCAPE) {
