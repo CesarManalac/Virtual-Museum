@@ -140,12 +140,12 @@ int main() {
 	GLuint pointLightDiff = glGetUniformLocation(shaderProgram, "pointLights[0].diffuse");
 	GLuint pointLightSpec = glGetUniformLocation(shaderProgram, "pointLights[0].specular");
 
-	glUniform3f(pointLightPos, 5.0, 0.0, 0.0);
+	glUniform3f(pointLightPos, -25.0f, -10.0f, -10.0f);
 	glUniform1f(pointLightCon, 1.0);
 	glUniform1f(pointLightLin, 0.09);
 	glUniform1f(pointLightQuad, 0.032);
-	glUniform3f(pointLightDiff, 3.0, 3.0, 3.0);
-	glUniform3f(pointLightSpec, 3.0, 3.0, 3.0);
+	glUniform3f(pointLightDiff, 10.0, 10.0, 10.0);
+	glUniform3f(pointLightSpec, 10.0, 10.0, 10.0);
 
 	GLuint spotLightPos = glGetUniformLocation(shaderProgram, "spotLight.position");
 	GLuint spotLightDir = glGetUniformLocation(shaderProgram, "spotLight.direction");
@@ -156,6 +156,16 @@ int main() {
 	GLuint spotLightQuad = glGetUniformLocation(shaderProgram, "spotLight.quadratic");
 	GLuint spotLightCutOff = glGetUniformLocation(shaderProgram, "spotLight.cutOff");
 	GLuint spotLightOuterCutOff = glGetUniformLocation(shaderProgram, "spotLight.outerCutOff");
+
+	glUniform3f(spotLightPos, 15.0f, 1.0f, -10.0f);
+	glUniform3f(spotLightDir, 0, -1, 0);
+	glUniform3f(spotLightDiff, 100.0, 100.0, 100.0);
+	glUniform3f(spotLightSpec, 100.0, 100.0, 100.0);
+	glUniform1f(spotLightCon, 1.0);
+	glUniform1f(spotLightLin, 0.09);
+	glUniform1f(spotLightQuad, 0.032);
+	glUniform1f(spotLightCutOff, cos(glm::radians(12.5f)));
+	glUniform1f(spotLightOuterCutOff, cos(glm::radians(15.0f)));
 
 	GLuint hasMulti = glGetUniformLocation(shaderProgram, "multi");
 	GLuint hasNormals = glGetUniformLocation(shaderProgram, "hasNormal");
@@ -244,19 +254,19 @@ int main() {
 				cameraPos + cameraTarget,
 				camerDirection
 			);
-		/*glUniform3f(cameraPosLoc, 0.0f, 0.0f, -15.0f);*/
-		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+		glUniform3f(cameraPosLoc, 0.0f, 0.0f, -15.0f);
+		//glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		glUniform3f(spotLightPos, cameraPos.x, cameraPos.y, cameraPos.z);
-		glUniform3f(spotLightDir, cameraPos.x + cameraTarget.x, cameraPos.y + cameraTarget.y, cameraPos.z + cameraTarget.z);
-		glUniform3f(spotLightDiff, 1.0, 1.0, 1.0);
-		glUniform3f(spotLightSpec, 1.0, 1.0, 1.0);
-		glUniform1f(spotLightCon, 1.0);
-		glUniform1f(spotLightLin, 0.09);
-		glUniform1f(spotLightQuad, 0.032);
-		glUniform1f(spotLightCutOff, cos(glm::radians(12.5f)));
-		glUniform1f(spotLightOuterCutOff, cos(glm::radians(15.0f)));
+		//glUniform3f(spotLightPos, cameraPos.x, cameraPos.y, cameraPos.z);
+		//glUniform3f(spotLightDir, cameraPos.x + cameraTarget.x, cameraPos.y + cameraTarget.y, cameraPos.z + cameraTarget.z);
+		//glUniform3f(spotLightDiff, 100.0, 100.0, 100.0);
+		//glUniform3f(spotLightSpec, 100.0, 100.0, 100.0);
+		//glUniform1f(spotLightCon, 1.0);
+		//glUniform1f(spotLightLin, 0.09);
+		//glUniform1f(spotLightQuad, 0.032);
+		//glUniform1f(spotLightCutOff, cos(glm::radians(12.5f)));
+		//glUniform1f(spotLightOuterCutOff, cos(glm::radians(15.0f)));
 
 #pragma endregion
 
@@ -360,7 +370,7 @@ int main() {
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
-		glUniform1i(hasMulti, true); // set to false for testing right now
+		glUniform1i(hasMulti, false);
 		glUniform1i(hasNormals, false);
 		glActiveTexture(GL_TEXTURE0);
 		GLuint pedestalTexture = pedestal.textures[pedestal.materials[0].diffuse_texname];
@@ -438,7 +448,7 @@ int main() {
 		glUniformMatrix4fv(normalTransformLoc, 1, GL_FALSE, glm::value_ptr(normalTrans));
 		glUniformMatrix4fv(modelTransformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
-		glUniform1i(hasMulti, true); // set to false for testing right now
+		glUniform1i(hasMulti, false); // set to false for testing right now
 		glUniform1i(hasNormals, false);
 
 		glActiveTexture(GL_TEXTURE0);
